@@ -1,0 +1,30 @@
+---
+- name: MY AS3 PLAYBOOK
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars_files:
+   - ../creds/bigip_creds.yaml
+
+  vars:
+    method: POST
+
+  tasks:
+  - name: POST AS3 DECLARATION
+    uri:
+      url: https://35.178.45.197/mgmt/shared/appsvcs/declare
+      user: "{{ bigip_user }}"
+      password: "{{ bigip_pass }}"
+      method: "{{ method }}"
+      body: "{{ lookup('file','as3.json') }}"
+      force_basic_auth: yes
+      status_code: 200
+      body_format: json
+      validate_certs: no
+    register: as3response
+
+  - name: DEBUG OUT AS3 RESPONSE
+    debug:
+      msg: "{{ as3response }}"
+...
